@@ -138,6 +138,7 @@ class AlenkaActions(object):
     commands = {
         "uptime": "время работы моего сервера",
         "vkonline": "сколько ты сегодня сидишь в ВК",
+        "filesize": "Размер файла",
         "start": "приветственное сообщение",
         "help": "список всех команд"
     }
@@ -186,6 +187,10 @@ class AlenkaActions(object):
                         count += int(line.split(";")[2])
 
         return "Сегодня ты сидишь в ВК уже " + str(round(count / 60.0, 3)) + "ч."
+
+    def filesize(self, **kwargs):
+        f = "/home/nsapunov/cloud_billing_1M.gz"
+        return self.__exec(["du", "-h", f])
 
 
 class Alenka(Daemon):
