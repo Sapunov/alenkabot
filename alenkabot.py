@@ -18,11 +18,14 @@ LOG = setup_log("alenkabot", settings.LOG_FILE)
 
 
 class APIError(Exception):
+
     def __init__(self, msg):
+
         Exception.__init__(self, msg)
 
 
 class AlenkaActions:
+
     commands = {
         "uptime": "время работы моего сервера",
         "start": "приветственное сообщение",
@@ -61,7 +64,9 @@ class AlenkaActions:
 
 
 class Alenka:
+
     def __init__(self, token, allowed_ids=[]):
+
         self.tapi = settings.TELEGRAM_API_URL
         self.token = settings.TOKEN
         self.updates_file = settings.UPDATES_FILE
@@ -79,6 +84,7 @@ class Alenka:
         )
 
     def _get_last(self):
+
         if os.path.exists(self.updates_file):
             try:
                 with open(self.updates_file, "rb") as fid:
@@ -89,6 +95,7 @@ class Alenka:
             return 0
 
     def _save_last(self):
+
         try:
             with open(self.updates_file, "wb") as fid:
                 pickle.dump(self.last, fid)
@@ -99,6 +106,7 @@ class Alenka:
             LOG.error(e)
 
     def query(self, method, params={}):
+
         LOG.info("Make request: method={0}, params={1}".format(
             method, params))
         req = requests.get(self.tapi.format(self.token, method), params=params)
@@ -111,12 +119,14 @@ class Alenka:
             raise APIError(answer)
 
     def _get_answer(self, command, uid=None, other=[]):
+
         if len(other) > 0:
             return getattr(self.actions, command)(uid=uid, other=other)
         else:
             return getattr(self.actions, command)(uid=uid)
 
     def get_answer(self, message):
+
         LOG.info("Get message: {0}.".format(message))
 
         if self.allowed_chats and (message["from"]["id"] not in self.allowed_chats):
@@ -136,6 +146,7 @@ class Alenka:
             return self._get_answer(words[0], message["from"]["id"], other=words[1:])
 
     def event_loop(self):
+
         timeout = 1
         empty_count = 0
         max_timeout = 5
@@ -169,5 +180,6 @@ class Alenka:
 
 
 if __name__ == "__main__":
+
     alenka = Alenka(settings.TOKEN, allowed_ids=settings.ALLOWED_IDS)
     alenka.event_loop()
